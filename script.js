@@ -14,7 +14,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-console.log("Bot Narrador v2.0 conectado correctamente.");
+console.log("Bot Narrador v3.0 con lógica flexible iniciado.");
 
 function log(msg) {
   const logDiv = document.getElementById("log");
@@ -25,70 +25,47 @@ function log(msg) {
 window.procesarComando = function () {
   const entrada = document.getElementById("comando").value.trim();
   if (!entrada) return;
-  const comandos = entrada.split(" /").filter(c => c.length);
-  comandos.forEach(c => ejecutar(c.trim()));
+  interpretarEntrada(entrada);
   document.getElementById("comando").value = "";
 }
 
-function ejecutar(c) {
-  if (c.startsWith("narrar")) {
-    const texto = c.replace("narrar", "").trim();
+function interpretarEntrada(texto) {
+  const t = texto.toLowerCase();
+
+  // Registro de narrativa pura
+  if (t.includes("susurra") || t.includes("profecía") || t.includes("sueño") || t.includes("leyenda") || t.includes("se dice que")) {
     const refHist = ref(db, 'historia');
     push(refHist, { tipo: "narracion", contenido: texto });
-    log("Narración guardada en historia.");
-  } else if (c.startsWith("guardar")) {
-    const texto = c.replace("guardar", "").trim();
-    const refHist = ref(db, 'historia');
-    push(refHist, { tipo: "registro", contenido: texto });
-    log("Registro libre guardado.");
-  } else if (c.startsWith("evento")) {
-    const datos = extraerArgumentos(c);
-    if (!datos.id || !datos.contenido) return log("Error: evento incompleto.");
-    const evento = {
-      tipo: datos.tipo || "accion",
-      ubicacion: datos.ubicacion || "desconocida",
-      contenido: datos.contenido
-    };
-    const refEv = ref(db, "lore/eventos/" + datos.id);
-    update(refEv, evento);
-    log(`Evento '${datos.id}' registrado en lore/eventos.`);
-  } else if (c.startsWith("actualizar")) {
-    const datos = extraerArgumentos(c);
-    if (!datos.personaje) return log("Error: personaje no definido.");
-    const actualizacion = {};
-    if (datos.hp) actualizacion.hp = datos.hp;
-    if (datos.efectos) actualizacion.efectos = datos.efectos.split(",");
-    const refPj = ref(db, "personajes/" + datos.personaje);
-    update(refPj, actualizacion);
-    log(`Personaje '${datos.personaje}' actualizado.`);
-  } else if (c.startsWith("descripcion")) {
-    const datos = extraerArgumentos(c);
-    if (!datos.personaje || !datos.contenido) return log("Error: descripción incompleta.");
-    const refPj = ref(db, "personajes/" + datos.personaje);
-    update(refPj, { descripcion: datos.contenido });
-    log(`Descripción añadida a '${datos.personaje}'.`);
-  } else if (c.startsWith("registrar")) {
-    const datos = extraerArgumentos(c);
-    if (!datos.lugar || !datos.descripcion) return log("Error: registro de lugar incompleto.");
-    const refLugar = ref(db, "lugares/" + datos.lugar);
-    update(refLugar, { descripcion: datos.descripcion });
-    log(`Lugar '${datos.lugar}' registrado en /lugares.`);
-  } else if (c.startsWith("accion")) {
-    const datos = extraerArgumentos(c);
-    if (!datos.personaje || !datos.contenido) return log("Error: acción incompleta.");
-    const refHist = ref(db, "historia");
-    push(refHist, { tipo: "accion", personaje: datos.personaje, contenido: datos.contenido });
-    log(`Acción registrada de '${datos.personaje}'.`);
-  } else {
-    log("Comando no reconocido: " + c);
+    return log("Narración simbólica registrada.");
   }
-}
 
-function extraerArgumentos(c) {
-  const obj = {};
-  c.split(" ").forEach(parte => {
-    const [clave, ...valor] = parte.split("=");
-    if (valor.length) obj[clave.trim()] = valor.join("=").replace(/^"|"$/g, '');
-  });
-  return obj;
+  // Registro de acción con personaje
+  if (t.includes("kaelen") || t.includes("rhogar") || t.includes("jorge") || t.includes("soria") || t.includes("lewys") || t.includes("vaelen")) {
+    const nombre = ["kaelen", "rhogar", "jorge", "soria", "lewys", "vaelen"].find(n => t.includes(n));
+    const refHist = ref(db, 'historia');
+    push(refHist, { tipo: "accion", personaje: nombre, contenido: texto });
+    return log(`Acción registrada para '${nombre}'.`);
+  }
+
+  // Registro de lugar
+  if (t.includes("nueva región") || t.includes("aparece un lugar") || t.includes("se funda") || t.includes("se descubre")) {
+    const palabras = texto.split(" ");
+    const lugar = palabras.find(p => p[0] === p[0].toUpperCase()); // busca palabra con mayúscula
+    const refLugar = ref(db, 'lugares/' + (lugar || "nuevo_lugar"));
+    update(refLugar, { descripcion: texto });
+    return log(`Lugar '${lugar}' registrado.`);
+  }
+
+  // Cambio de estado HP (búsqueda por "hp", "herido", etc.)
+  if (t.includes("hp") && t.includes("kaelen")) {
+    const valor = texto.match(/\d+\/\d+/);
+    const refPj = ref(db, 'personajes/kaelen');
+    update(refPj, { hp: valor ? valor[0] : "?" });
+    return log("HP de Kaelen actualizado.");
+  }
+
+  // Registro libre si no se detecta nada
+  const refHist = ref(db, 'historia');
+  push(refHist, { tipo: "registro", contenido: texto });
+  log("Entrada libre registrada.");
 }
