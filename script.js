@@ -3,13 +3,14 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/fireba
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDRNUAjtw4US05vfkhcJYtLWwMcw_sTLB0",
-  authDomain: "susurrosdeeryndor.firebaseapp.com",
-  databaseURL: "https://susurrosdeeryndor-default-rtdb.firebaseio.com",
-  projectId: "susurrosdeeryndor",
-  storageBucket: "susurrosdeeryndor.firebasestorage.app",
-  messagingSenderId: "654804276821",
-  appId: "1:654804276821:web:f112a52ca164237ca9e6dc"
+  apiKey: "AIzaSyDEaZwsIA-Dm6M8wTN67ebyLHA6bRYICuI",
+  authDomain: "mundo-de-rol.firebaseapp.com",
+  databaseURL: "https://mundo-de-rol-default-rtdb.firebaseio.com",
+  projectId: "mundo-de-rol",
+  storageBucket: "mundo-de-rol.firebasestorage.app",
+  messagingSenderId: "90664853839",
+  appId: "1:90664853839:web:ddb31bee20b6077842a53a",
+  measurementId: "G-Q46Y5LMXRC"
 };
 
 const app = initializeApp(firebaseConfig);
