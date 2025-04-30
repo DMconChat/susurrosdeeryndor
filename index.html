@@ -2,15 +2,19 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mundo de Rol</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bot Narrador - Susurros de Eryndor</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>🌑 Mundo de Rol</h1>
-    <p>Panel de personajes en tiempo real.</p>
-    <div id="personajes-container"></div>
-    <script type="module" src="script.js"></script>
+  <h1>Susurros de Eryndor - Bot Narrador</h1>
+  <p>Escribe tus comandos abajo para registrar historia, eventos o actualizar personajes.</p>
+  <div id="log"></div>
+  <div id="formulario">
+    <input type="text" id="comando" placeholder="/evento ... /actualizar ... /narrar ..." />
+    <button onclick="procesarComando()">Enviar</button>
+  </div>
+  <script type="module" src="script.js"></script>
 </body>
 </html>
